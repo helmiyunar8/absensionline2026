@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,14 +21,12 @@ font-size:16px;
 
 video{
 width:90%;
-max-width:400px;
 }
 
 canvas{
 display:none;
 }
 </style>
-
 </head>
 
 <body>
@@ -49,7 +46,7 @@ display:none;
 
 <br>
 
-<video id="video" autoplay playsinline></video>
+<video id="video" autoplay></video>
 
 <br>
 
@@ -64,11 +61,8 @@ display:none;
 var video = document.getElementById("video");
 
 navigator.mediaDevices.getUserMedia({video:true})
-.then(function(stream){
+.then(stream=>{
 video.srcObject = stream;
-})
-.catch(function(err){
-alert("Kamera tidak bisa dibuka");
 });
 
 function ambilFoto(){
@@ -76,10 +70,10 @@ function ambilFoto(){
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 
-canvas.width = 400;
-canvas.height = 300;
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
 
-context.drawImage(video,0,0,400,300);
+context.drawImage(video,0,0);
 
 alert("Foto berhasil diambil");
 }
@@ -90,13 +84,9 @@ var nama = document.getElementById("nama").value;
 var kelas = document.getElementById("kelas").value;
 var status = document.getElementById("status").value;
 
-if(nama=="" || kelas==""){
-alert("Nama dan kelas harus diisi");
-return;
-}
-
 var canvas = document.getElementById("canvas");
-var foto = canvas.toDataURL("image/jpeg",0.7);
+
+var foto = canvas.toDataURL("image/png");
 
 var data = new FormData();
 
@@ -105,16 +95,13 @@ data.append("kelas",kelas);
 data.append("status",status);
 data.append("foto",foto);
 
-fetch("https://script.google.com/macros/s/AKfycbwqqHvukcSZrrXYSiZF6lGkP5CThkrFC845hdrdIyz_t1YnbiU7QzDq-BglfSjpkKH6Tg/exec",{
+fetch("https://script.google.com/macros/s/AKfycbwJf5MikC0rkOnGldND_JRoOCj5bm9tJ1x0x-SMG2te41enDO6Slr5Hx0NucBA-O41MlQ/exec",{
 method:"POST",
 body:data
 })
-.then(response => response.text())
-.then(data => {
+.then(res=>res.text())
+.then(res=>{
 alert("Absensi berhasil dikirim");
-})
-.catch(error => {
-alert("Gagal mengirim absensi");
 });
 
 }
