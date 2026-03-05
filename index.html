@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Absensi Online</title>
+<title>Presensi Siswa</title>
 
 <style>
 body{
@@ -21,17 +22,19 @@ font-size:16px;
 
 video{
 width:90%;
+max-width:400px;
 }
 
 canvas{
 display:none;
 }
 </style>
+
 </head>
 
 <body>
 
-<h2>ABSENSI ONLINE</h2>
+<h2>PRESENSI SISWA</h2>
 
 <input type="text" id="nama" placeholder="Nama">
 
@@ -50,9 +53,9 @@ display:none;
 
 <br>
 
-<button onclick="ambilFoto()">📸 Ambil Foto</button>
+<button onclick="ambilFoto()">📷 Ambil Foto</button>
 
-<button onclick="kirim()">Kirim Absensi</button>
+<button onclick="kirim()">Kirim Presensi</button>
 
 <canvas id="canvas"></canvas>
 
@@ -61,7 +64,7 @@ display:none;
 var video = document.getElementById("video");
 
 navigator.mediaDevices.getUserMedia({video:true})
-.then(stream=>{
+.then(function(stream){
 video.srcObject = stream;
 });
 
@@ -70,12 +73,13 @@ function ambilFoto(){
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 
-canvas.width = video.videoWidth;
-canvas.height = video.videoHeight;
+canvas.width = 400;
+canvas.height = 300;
 
-context.drawImage(video,0,0);
+context.drawImage(video,0,0,400,300);
 
 alert("Foto berhasil diambil");
+
 }
 
 function kirim(){
@@ -85,7 +89,6 @@ var kelas = document.getElementById("kelas").value;
 var status = document.getElementById("status").value;
 
 var canvas = document.getElementById("canvas");
-
 var foto = canvas.toDataURL("image/png");
 
 var data = new FormData();
@@ -95,13 +98,13 @@ data.append("kelas",kelas);
 data.append("status",status);
 data.append("foto",foto);
 
-fetch("https://script.google.com/macros/s/AKfycbyH5Yqi4WZAe7xrI-o9is3tnXC8blX0MqSVnA4vwxhq81Q-ja8JWgY7eTweabG7RDx7tg/exec",{
+fetch("MASUKKAN_LINK_APPS_SCRIPT_DISINI",{
 method:"POST",
 body:data
 })
 .then(res=>res.text())
 .then(res=>{
-alert("Absensi berhasil dikirim");
+alert("Presensi berhasil dikirim");
 });
 
 }
