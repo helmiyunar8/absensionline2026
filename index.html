@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,12 +22,14 @@ font-size:16px;
 
 video{
 width:90%;
+max-width:400px;
 }
 
 canvas{
 display:none;
 }
 </style>
+
 </head>
 
 <body>
@@ -46,7 +49,7 @@ display:none;
 
 <br>
 
-<video id="video" autoplay></video>
+<video id="video" autoplay playsinline></video>
 
 <br>
 
@@ -61,8 +64,11 @@ display:none;
 var video = document.getElementById("video");
 
 navigator.mediaDevices.getUserMedia({video:true})
-.then(stream=>{
+.then(function(stream){
 video.srcObject = stream;
+})
+.catch(function(err){
+alert("Kamera tidak bisa dibuka");
 });
 
 function ambilFoto(){
@@ -70,10 +76,10 @@ function ambilFoto(){
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 
-canvas.width = video.videoWidth;
-canvas.height = video.videoHeight;
+canvas.width = 400;
+canvas.height = 300;
 
-context.drawImage(video,0,0);
+context.drawImage(video,0,0,400,300);
 
 alert("Foto berhasil diambil");
 }
@@ -84,9 +90,13 @@ var nama = document.getElementById("nama").value;
 var kelas = document.getElementById("kelas").value;
 var status = document.getElementById("status").value;
 
-var canvas = document.getElementById("canvas");
+if(nama=="" || kelas==""){
+alert("Nama dan kelas harus diisi");
+return;
+}
 
-var foto = canvas.toDataURL("image/png");
+var canvas = document.getElementById("canvas");
+var foto = canvas.toDataURL("image/jpeg",0.7);
 
 var data = new FormData();
 
@@ -99,9 +109,12 @@ fetch("https://script.google.com/macros/s/AKfycbyEv8huuVBcvySABp0ApuQWZaAj64QF1J
 method:"POST",
 body:data
 })
-.then(res=>res.text())
-.then(res=>{
+.then(response => response.text())
+.then(data => {
 alert("Absensi berhasil dikirim");
+})
+.catch(error => {
+alert("Gagal mengirim absensi");
 });
 
 }
