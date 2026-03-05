@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Absensi Online</title>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#f2f2f2;
+padding:20px;
+}
+
+input,select,button{
+width:90%;
+padding:12px;
+margin:10px;
+font-size:16px;
+}
+
+video{
+width:90%;
+}
+
+canvas{
+display:none;
+}
+</style>
+</head>
+
+<body>
+
+<h2>ABSENSI ONLINE</h2>
+
+<input type="text" id="nama" placeholder="Nama">
+
+<input type="text" id="kelas" placeholder="Kelas">
+
+<select id="status">
+<option value="Hadir">Hadir</option>
+<option value="Sakit">Sakit</option>
+<option value="Izin">Izin</option>
+<option value="Alpha">Alpha</option>
+</select>
+
+<br>
+
+<video id="video" autoplay></video>
+
+<br>
+
+<button onclick="ambilFoto()">📸 Ambil Foto</button>
+
+<button onclick="kirim()">Kirim Absensi</button>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+var video = document.getElementById("video");
+
+navigator.mediaDevices.getUserMedia({video:true})
+.then(stream=>{
+video.srcObject = stream;
+});
+
+function ambilFoto(){
+
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("2d");
+
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+
+context.drawImage(video,0,0);
+
+alert("Foto berhasil diambil");
+}
+
+function kirim(){
+
+var nama = document.getElementById("nama").value;
+var kelas = document.getElementById("kelas").value;
+var status = document.getElementById("status").value;
+
+var canvas = document.getElementById("canvas");
+
+var foto = canvas.toDataURL("image/png");
+
+var data = new FormData();
+
+data.append("nama",nama);
+data.append("kelas",kelas);
+data.append("status",status);
+data.append("foto",foto);
+
+fetch("https://script.google.com/macros/s/AKfycbyEv8huuVBcvySABp0ApuQWZaAj64QF1Jq42cX79IghI6cNrrGi_5m9nVZeYxGY3DkFTA/exec",{
+method:"POST",
+body:data
+})
+.then(res=>res.text())
+.then(res=>{
+alert("Absensi berhasil dikirim");
+});
+
+}
+
+</script>
+
+</body>
+</html>
