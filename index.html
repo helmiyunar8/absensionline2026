@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Presensi Siswa</title>
+<title>Absensi Online</title>
 
 <style>
 body{
@@ -13,16 +13,30 @@ background:#f2f2f2;
 padding:20px;
 }
 
+h2{
+color:#333;
+}
+
 input,select,button{
 width:90%;
 padding:12px;
 margin:10px;
 font-size:16px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+background:#2c7be5;
+color:white;
+border:none;
 }
 
 video{
 width:90%;
 max-width:400px;
+border-radius:10px;
+margin-top:10px;
 }
 
 canvas{
@@ -34,9 +48,9 @@ display:none;
 
 <body>
 
-<h2>PRESENSI SISWA</h2>
+<h2>ABSENSI SISWA</h2>
 
-<input type="text" id="nama" placeholder="Nama">
+<input type="text" id="nama" placeholder="Nama Siswa">
 
 <input type="text" id="kelas" placeholder="Kelas">
 
@@ -47,15 +61,13 @@ display:none;
 <option value="Alpha">Alpha</option>
 </select>
 
-<br>
-
-<video id="video" autoplay></video>
+<video id="video" autoplay playsinline></video>
 
 <br>
 
 <button onclick="ambilFoto()">📷 Ambil Foto</button>
 
-<button onclick="kirim()">Kirim Presensi</button>
+<button onclick="kirim()">Kirim Absensi</button>
 
 <canvas id="canvas"></canvas>
 
@@ -63,9 +75,13 @@ display:none;
 
 var video = document.getElementById("video");
 
+// membuka kamera
 navigator.mediaDevices.getUserMedia({video:true})
 .then(function(stream){
 video.srcObject = stream;
+})
+.catch(function(){
+alert("Kamera tidak bisa dibuka");
 });
 
 function ambilFoto(){
@@ -88,6 +104,11 @@ var nama = document.getElementById("nama").value;
 var kelas = document.getElementById("kelas").value;
 var status = document.getElementById("status").value;
 
+if(nama=="" || kelas==""){
+alert("Nama dan kelas harus diisi");
+return;
+}
+
 var canvas = document.getElementById("canvas");
 var foto = canvas.toDataURL("image/png");
 
@@ -96,16 +117,21 @@ var data = new FormData();
 data.append("nama",nama);
 data.append("kelas",kelas);
 data.append("status",status);
-data.append("tanggal",tanggal);
 data.append("foto",foto);
 
+// GANTI LINK DI BAWAH DENGAN LINK APPS SCRIPT BAPAK
 fetch("https://script.google.com/macros/s/AKfycbzxHyCPH4BoXhQiXwaurMbLJau3VhfDMKfF5C-Yztd0-DHd8OjZ7LJJsFucYl8WJBVA6Q/exec",{
+
 method:"POST",
 body:data
+
 })
-.then(res=>res.text())
-.then(res=>{
-alert("Presensi berhasil dikirim");
+.then(response => response.text())
+.then(function(){
+alert("Absensi berhasil dikirim");
+})
+.catch(function(){
+alert("Gagal mengirim absensi");
 });
 
 }
